@@ -26,8 +26,8 @@ public class FilmValidation {
             log.warn("В отправленной форме отсутствует имя");
             throw new ValidationException("Имя фильма не может быть пустым");
         }
-        int MAX_DESCRIPTION = 200;
-        if (film.getDescription() == null || film.getDescription().length() > MAX_DESCRIPTION) {
+        int descriptionMaxLength = 200;
+        if (film.getDescription() == null || film.getDescription().length() > descriptionMaxLength) {
             log.warn("Описание фильма задана не верно {}", film.getDescription());
             throw new ValidationException("Некорректное описание");
         }
