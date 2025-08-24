@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.Duration;
+
 import java.time.LocalDate;
 
 /**
@@ -18,5 +18,5 @@ public class Film {
     String name;
     String description;
     LocalDate releaseDate;
-    Duration duration;
+    int duration;
 }

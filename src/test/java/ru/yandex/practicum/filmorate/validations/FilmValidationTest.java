@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.exceptions.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +24,7 @@ class FilmValidationTest {
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         films.put(film.getId(), film);
         // Создаем второй фильм с точно такими же параметрами за исключением ID
@@ -34,7 +33,7 @@ class FilmValidationTest {
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         DuplicatedDataException duplicatedDataException =
                 Assertions.assertThrows(DuplicatedDataException.class, () -> validateDuplicatedFilm(film2, films));
@@ -49,7 +48,7 @@ class FilmValidationTest {
                 .name("")
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -62,7 +61,7 @@ class FilmValidationTest {
                 .id(1)
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -75,7 +74,7 @@ class FilmValidationTest {
                 .id(1)
                 .name("Name")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -89,7 +88,7 @@ class FilmValidationTest {
                 .name("Name")
                 .description("Description Exceeds Max Length".repeat(7))
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -102,7 +101,7 @@ class FilmValidationTest {
                 .id(1)
                 .name("Name")
                 .description("Description")
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -115,7 +114,7 @@ class FilmValidationTest {
                 .id(1)
                 .name("Name")
                 .description("Description")
-                .duration(Duration.ofMinutes(105))
+                .duration(105)
                 .releaseDate(LocalDate.of(1895, 12, 27))
                 .build();
         ValidationException validationException =
@@ -144,7 +143,7 @@ class FilmValidationTest {
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ZERO)
+                .duration(0)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
@@ -159,7 +158,7 @@ class FilmValidationTest {
                 .name("Name")
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(Duration.ofMinutes(-1))
+                .duration(-1)
                 .build();
         ValidationException validationException =
                 Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));

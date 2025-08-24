@@ -35,7 +35,7 @@ public class FilmValidation {
             log.warn("В отправленной форме неверно указана дата релиза: {}", film.getReleaseDate());
             throw new ValidationException("Неверно указана дата релиза");
         }
-        if (film.getDuration() == null || film.getDuration().isZero() || film.getDuration().isNegative()) {
+        if (film.getDuration() <= 0) {
             log.warn("Неверно указана продолжительность: {}", film.getDuration());
             throw new ValidationException("Продолжительность фильма должна быть больше нуля");
         }
