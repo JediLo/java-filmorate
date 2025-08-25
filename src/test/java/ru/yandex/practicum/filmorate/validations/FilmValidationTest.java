@@ -1,19 +1,31 @@
 package ru.yandex.practicum.filmorate.validations;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.yandex.practicum.filmorate.exceptions.DuplicatedDataException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import static ru.yandex.practicum.filmorate.validations.FilmValidation.validateDuplicatedFilm;
-import static ru.yandex.practicum.filmorate.validations.FilmValidation.validateFilm;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.yandex.practicum.filmorate.validations.ValidationDuplicate.validateDuplicatedFilm;
 
+
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ValidationAutoConfiguration.class)
 class FilmValidationTest {
+    @Autowired
+    private Validator validator;
 
     @Test
     void shouldThrowDuplicateWhenFilmDataIsIdenticalExceptId() {
@@ -37,7 +49,7 @@ class FilmValidationTest {
                 .build();
         DuplicatedDataException duplicatedDataException =
                 Assertions.assertThrows(DuplicatedDataException.class, () -> validateDuplicatedFilm(film2, films));
-        Assertions.assertEquals("Вы пытаетесь добавить уже существующий фильм",
+        assertEquals("Вы пытаетесь добавить уже существующий фильм",
                 duplicatedDataException.getMessage());
     }
 
@@ -50,9 +62,10 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Имя фильма не может быть пустым", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Имя не может быть пустым", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -63,9 +76,10 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Имя фильма не может быть пустым", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Имя не может быть пустым", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -76,13 +90,16 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Некорректное описание", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Описание не может быть пустым", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
     void shouldThrowValidationWhenDescriptionExceedsMaxLength() {
+
+
         Film film = Film.builder()
                 .id(1)
                 .name("Name")
@@ -90,9 +107,11 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Некорректное описание", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Описание не может быть более 200 символов", constraintViolations.iterator().next().getMessage());
+
     }
 
     @Test
@@ -103,9 +122,10 @@ class FilmValidationTest {
                 .description("Description")
                 .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Неверно указана дата релиза", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Дата Релиза фильма не может быть пустой", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -114,12 +134,13 @@ class FilmValidationTest {
                 .id(1)
                 .name("Name")
                 .description("Description")
-                .duration(105)
                 .releaseDate(LocalDate.of(1895, 12, 27))
+                .duration(105)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Неверно указана дата релиза", validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Дата релиза фильма не может быть раньше 1895-12-28", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -130,10 +151,10 @@ class FilmValidationTest {
                 .description("Description")
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Продолжительность фильма должна быть больше нуля",
-                validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Продолжительность фильма должно быть положительным", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -145,10 +166,10 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(0)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Продолжительность фильма должна быть больше нуля",
-                validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Продолжительность фильма должно быть положительным", constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -160,9 +181,9 @@ class FilmValidationTest {
                 .releaseDate(LocalDate.of(2025, 1, 1))
                 .duration(-1)
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateFilm(film));
-        Assertions.assertEquals("Продолжительность фильма должна быть больше нуля",
-                validationException.getMessage());
+        Set<ConstraintViolation<Film>> constraintViolations =
+                validator.validate(film);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Продолжительность фильма должно быть положительным", constraintViolations.iterator().next().getMessage());
     }
 }

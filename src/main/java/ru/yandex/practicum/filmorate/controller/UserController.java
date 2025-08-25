@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.validations.UserValidation.validateDuplicateUser;
-import static ru.yandex.practicum.filmorate.validations.UserValidation.validateUser;
+import static ru.yandex.practicum.filmorate.validations.ValidationDuplicate.validateDuplicateUser;
 
 @Slf4j
 @RestController
@@ -26,9 +26,8 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user) {
+    public User addUser(@Valid @RequestBody User user) {
         log.info("Попытка добавления пользователя с ID: {}", user.getId());
-        validateUser(user);
         validateDuplicateUser(user, users);
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -42,14 +41,13 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@Valid @RequestBody User user) {
         log.info("Попытка обновления данных пользователя ID: {}", user.getId());
         User userFromData = users.get(user.getId());
         if (userFromData == null) {
             log.warn("В системе нет пользователя с переданным ID: {}", user.getId());
-            throw new ValidationException("Пользователь с ID: " + user.getId() + " не найден");
+            throw new NotFoundException("Пользователь с ID: " + user.getId() + " не найден");
         }
-        validateUser(user);
         validateDuplicateUser(user, users);
 
         if (user.getName() != null && !user.getName().isBlank()) {

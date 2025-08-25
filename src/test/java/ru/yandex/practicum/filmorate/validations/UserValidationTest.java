@@ -1,19 +1,30 @@
 package ru.yandex.practicum.filmorate.validations;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ru.yandex.practicum.filmorate.exceptions.DuplicatedDataException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
-import static ru.yandex.practicum.filmorate.validations.UserValidation.validateDuplicateUser;
-import static ru.yandex.practicum.filmorate.validations.UserValidation.validateUser;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static ru.yandex.practicum.filmorate.validations.ValidationDuplicate.validateDuplicateUser;
 
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = ValidationAutoConfiguration.class)
 class UserValidationTest {
+    @Autowired
+    Validator validator;
 
     @Test
     void shouldThrowDuplicateWhenEmailExist() {
@@ -48,10 +59,11 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Электронная почта не может быть пустой и должна содержать символ @",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations =
+                validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Электронная почта не может быть пустой",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -63,10 +75,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Электронная почта не может быть пустой и должна содержать символ @",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Электронная почта должна содержать символ @",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -78,10 +90,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Электронная почта не может быть пустой и должна содержать символ @",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Электронная почта не может быть пустой",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -92,10 +104,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Логин не может быть пустым и содержать пробелы",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Логин не может быть пустым",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -107,10 +119,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Логин не может быть пустым и содержать пробелы",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Логин не может быть пустым",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -122,10 +134,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2025, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Логин не может быть пустым и содержать пробелы",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Логин не может содержать пробелы",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -137,10 +149,10 @@ class UserValidationTest {
                 .name("Name")
                 .birthday(LocalDate.of(2026, 1, 1))
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Неверно заполнена дата рождения",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Дата рождения должна быть в прошлом",
+                constraintViolations.iterator().next().getMessage());
     }
 
     @Test
@@ -151,9 +163,9 @@ class UserValidationTest {
                 .login("login")
                 .name("Name")
                 .build();
-        ValidationException validationException =
-                Assertions.assertThrows(ValidationException.class, () -> validateUser(user));
-        Assertions.assertEquals("Неверно заполнена дата рождения",
-                validationException.getMessage());
+        Set<ConstraintViolation<User>> constraintViolations = validator.validate(user);
+        assertEquals(1, constraintViolations.size());
+        assertEquals("Дата рождения должна быть заполнена",
+                constraintViolations.iterator().next().getMessage());
     }
 }

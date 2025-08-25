@@ -1,17 +1,18 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.validations.FilmValidation.validateDuplicatedFilm;
-import static ru.yandex.practicum.filmorate.validations.FilmValidation.validateFilm;
+import static ru.yandex.practicum.filmorate.validations.ValidationDuplicate.validateDuplicatedFilm;
+
 
 @Slf4j
 @RestController
@@ -27,10 +28,9 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Попытка добавления фильма {}", film.getName());
         validateDuplicatedFilm(film, films);
-        validateFilm(film);
         film.setId(getNextId());
         films.put(film.getId(), film);
         log.info("Фильм с ID: {}, был успешно добавлен", film.getId());
@@ -40,15 +40,14 @@ public class FilmController {
 
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film) {
+    public Film updateFilm(@Valid @RequestBody Film film) {
         log.info("Попытка изменения фильма с ID: {}", film.getId());
         Film filmFromData = films.get(film.getId());
         if (filmFromData == null) {
             log.warn("В системе нет фильма с переданным ID: {}", film.getId());
-            throw new ValidationException("Фильм с таким ID не найден");
+            throw new NotFoundException("Фильм с таким ID не найден");
         }
         validateDuplicatedFilm(film, films);
-        validateFilm(film);
         filmFromData.setName(film.getName());
         filmFromData.setDescription(film.getDescription());
         filmFromData.setDuration(film.getDuration());
