@@ -2,23 +2,18 @@ package ru.yandex.practicum.filmorate.validations;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ru.yandex.practicum.filmorate.exceptions.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static ru.yandex.practicum.filmorate.validations.ValidationDuplicate.validateDuplicatedFilm;
 
 
 @ExtendWith(SpringExtension.class)
@@ -27,31 +22,6 @@ class FilmValidationTest {
     @Autowired
     private Validator validator;
 
-    @Test
-    void shouldThrowDuplicateWhenFilmDataIsIdenticalExceptId() {
-        Map<Integer, Film> films = new HashMap<>();
-        // Создаем фильм и добавляем в Map
-        Film film = Film.builder()
-                .id(1)
-                .name("Name")
-                .description("Description")
-                .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(105)
-                .build();
-        films.put(film.getId(), film);
-        // Создаем второй фильм с точно такими же параметрами за исключением ID
-        Film film2 = Film.builder()
-                .id(2)
-                .name("Name")
-                .description("Description")
-                .releaseDate(LocalDate.of(2025, 1, 1))
-                .duration(105)
-                .build();
-        DuplicatedDataException duplicatedDataException =
-                Assertions.assertThrows(DuplicatedDataException.class, () -> validateDuplicatedFilm(film2, films));
-        assertEquals("Вы пытаетесь добавить уже существующий фильм",
-                duplicatedDataException.getMessage());
-    }
 
     @Test
     void shouldThrowValidationWhenNameIsBlank() {

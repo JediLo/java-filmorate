@@ -1,18 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import ru.yandex.practicum.filmorate.validations.ReleaseDateAfter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 
 /**
  * Film.
  */
 @Data
 @EqualsAndHashCode(exclude = "id")
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Film {
     int id;
@@ -26,4 +32,15 @@ public class Film {
     LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма должно быть положительным")
     int duration;
+
+    Set<Integer> likesUsers = new HashSet<>();
+
+    public boolean addLike(int id) {
+        return likesUsers.add(id);
+    }
+
+    public boolean removeLike(int id) {
+        return likesUsers.remove(id);
+    }
+
 }
