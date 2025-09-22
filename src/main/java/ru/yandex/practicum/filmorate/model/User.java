@@ -14,20 +14,20 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class User {
-    int id;
+    private int id;
     @EqualsAndHashCode.Include
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")
-    String email;
+    private String email;
     @NotBlank(message = "Логин не может быть пустым")
     @Pattern(regexp = "^[^ ]*$", message = "Логин не может содержать пробелы")
-    String login;
-    String name;
+    private String login;
+    private String name;
     @NotNull(message = "Дата рождения должна быть заполнена")
     @Past(message = "Дата рождения должна быть в прошлом")
-    LocalDate birthday;
+    private LocalDate birthday;
 
-    Set<Integer> friendSet = new HashSet<>();
+    private Set<Integer> friendSet = new HashSet<>();
 
 
     public boolean addFriend(Integer id) {

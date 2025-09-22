@@ -15,7 +15,7 @@ import java.util.Collection;
 @RequestMapping("/films")
 public class FilmController {
 
-    final FilmService filmService;
+    private final FilmService filmService;
 
     public FilmController(final FilmService filmService) {
         this.filmService = filmService;

@@ -91,10 +91,10 @@ public class FilmService {
         userService.getExistingUserById(userId);
         if (!film.addLike(userId)) {
             throw new DuplicatedDataException("Лайк уже был поставлен ранее");
-        } else {
-            log.info("Лайк у фильма с ID: {}, был добавлен пользователем с ID:{}", id, userId);
-            return film;
         }
+        log.info("Лайк у фильма с ID: {}, был добавлен пользователем с ID:{}", id, userId);
+        return film;
+
     }
 
     public Film removeLike(int id, int userId) {
@@ -103,10 +103,10 @@ public class FilmService {
         userService.getExistingUserById(userId);
         if (!film.removeLike(userId)) {
             throw new DuplicatedDataException("Нет лайка который вы хотели бы убрать");
-        } else {
-            log.info("Лайк у фильма с ID: {}, был убран пользователем с ID:{}", id, userId);
-            return film;
         }
+        log.info("Лайк у фильма с ID: {}, был убран пользователем с ID:{}", id, userId);
+        return film;
+
     }
 
     public Collection<Film> findPopularFilms(int count) {

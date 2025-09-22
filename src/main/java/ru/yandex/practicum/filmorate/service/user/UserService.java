@@ -110,10 +110,10 @@ public class UserService {
         if (addFromUser && addFromFriend) {
             log.info("Друг с ID: {} был добавлен пользователю с ID: {}", friend, id);
             return user;
-        } else {
-            log.warn("Пользователи {} и {} уже друзья", id, friendId);
-            throw new DuplicatedDataException("Пользователи уже друзья");
         }
+        log.warn("Пользователи {} и {} уже друзья", id, friendId);
+        throw new DuplicatedDataException("Пользователи уже друзья");
+
 
     }
 
