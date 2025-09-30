@@ -1,22 +1,20 @@
 # java-filmorate
 # Схема базы данных
 
-![Схема для фильмов](Film.png)
-![Схема для пользователей](User.png)
+![Схема БД](Schema.png)
 
-## Пояснение к схеме для пользователей
+
+## Пояснение к схеме 
 
 В схеме показаны таблицы нашего приложения:
 - `users` — пользователи приложения.
 - `friendships` — связи дружбы между пользователями.
 - `friendship_status` — статус дружбы.
-
-## Пояснение к схеме для фильмов
-
-В схеме показаны таблицы нашего приложения:
-- `films` — фильмы с жанрами и рейтингами.
-- `genres` — жанры фильмов.
+- `films` — фильмы с названием, описанием, датой релиза, продолжительностью и возрастным рейтингом
 - `ratings` — возрастные рейтинги фильмов.
+- `genres` - жанры фильмов.
+- `film_genres` - связь «многие-ко-многим» между фильмами и жанрами.
+- `like_film` - лайки пользователей для фильмов.
 
 
 ### Примеры запросов:
@@ -25,7 +23,8 @@
 ```sql
 SELECT f.name, f.release_date
 FROM films f
-JOIN genres g ON f.genre_id = g.id
+JOIN film_genres fg ON f.id = fg.film_id
+JOIN genres g ON fg.genre_id = g.id
 WHERE g.name = 'Comedy';
 ```
 
@@ -51,4 +50,33 @@ SELECT u.username
 FROM friendships fs
 JOIN users u ON fs.addressee_id = u.id
 WHERE fs.requester_id = 1 AND fs.status_id = 2;
+```
+5. Получить всех пользователей, которые поставили лайк конкретному фильму
+```sql
+SELECT u.username
+FROM like_film lf
+JOIN users u ON lf.user_id = u.id
+WHERE lf.film_id = 10;
+```
+6. Посчитать количество лайков у каждого фильма:
+```sql
+SELECT f.name, COUNT(lf.user_id) AS likes_count
+FROM films f
+LEFT JOIN like_film lf ON f.id = lf.film_id
+GROUP BY f.id, f.name
+ORDER BY likes_count DESC;
+```
+7. Получить все жанры конкретного фильма:
+```sql
+SELECT g.name
+FROM film_genres fg
+JOIN genres g ON fg.genre_id = g.id
+WHERE fg.film_id = 5;
+```
+8. Получить все фильмы конкретного жанра:
+```sql
+SELECT f.name
+FROM film_genres fg
+JOIN films f ON fg.film_id = f.id
+WHERE fg.genre_id = 3;
 ```
