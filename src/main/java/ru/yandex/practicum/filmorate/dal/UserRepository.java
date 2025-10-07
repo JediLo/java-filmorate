@@ -94,17 +94,17 @@ public class UserRepository extends BaseRepository<User> {
         return user;
     }
 
-    public void addFriend(int requester_id, int addressee_id) {
+    public void addFriend(int requesterId, int addresseeId) {
 
         insertWithoutKey(INSERT_FRIEND,
-                requester_id,
-                addressee_id);
+                requesterId,
+                addresseeId);
 
 
     }
 
-    public void removeFriend(int requester_id, int addressee_id) {
-        delete(DELETE_FRIEND, requester_id, addressee_id);
+    public void removeFriend(int requesterId, int addresseeId) {
+        delete(DELETE_FRIEND, requesterId, addresseeId);
     }
 
     public User updateUser(User user) {

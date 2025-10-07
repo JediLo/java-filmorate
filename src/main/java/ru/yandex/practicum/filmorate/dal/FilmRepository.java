@@ -65,7 +65,6 @@ public class FilmRepository extends BaseRepository<Film> {
     }
 
     public Film addFilm(Film film) {
-        System.out.println(film);
         int id = insert(INSERT_FILM_QUERY,
                 film.getName(),
                 film.getDescription(),
