@@ -5,7 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -26,8 +25,8 @@ public class User {
     @NotNull(message = "Дата рождения должна быть заполнена")
     @Past(message = "Дата рождения должна быть в прошлом")
     private LocalDate birthday;
-
-    private Set<Integer> friendSet = new HashSet<>();
+    private Set<Integer> likesFilms;
+    private Set<Integer> friendSet;
 
 
     public boolean addFriend(Integer id) {

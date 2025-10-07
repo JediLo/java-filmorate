@@ -9,7 +9,6 @@
 В схеме показаны таблицы нашего приложения:
 - `users` — пользователи приложения.
 - `friendships` — связи дружбы между пользователями.
-- `friendship_status` — статус дружбы.
 - `films` — фильмы с названием, описанием, датой релиза, продолжительностью и возрастным рейтингом
 - `ratings` — возрастные рейтинги фильмов.
 - `genres` - жанры фильмов.
@@ -25,7 +24,7 @@ SELECT f.name, f.release_date
 FROM films f
 JOIN film_genres fg ON f.id = fg.film_id
 JOIN genres g ON fg.genre_id = g.id
-WHERE g.name = 'Comedy';
+WHERE g.name = 'Комедия';
 ```
 
 2. Получить все фильмы с определённым возрастным рейтингом:
@@ -40,7 +39,7 @@ WHERE r.name = 'PG-13';
 ```sql
 SELECT u.username, COUNT(fs.addressee_id) AS total_friends
 FROM users u
-LEFT JOIN friendships fs ON u.id = fs.requester_id AND fs.status_id = 2
+LEFT JOIN friendships fs ON u.id = fs.requester_id 
 GROUP BY u.id, u.username
 ORDER BY total_friends DESC;
 ```
@@ -48,8 +47,7 @@ ORDER BY total_friends DESC;
 ```sql
 SELECT u.username
 FROM friendships fs
-JOIN users u ON fs.addressee_id = u.id
-WHERE fs.requester_id = 1 AND fs.status_id = 2;
+WHERE fs.requester_id = 1 OR fs.addressee = 1;
 ```
 5. Получить всех пользователей, которые поставили лайк конкретному фильму
 ```sql
