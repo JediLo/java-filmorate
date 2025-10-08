@@ -49,7 +49,9 @@ public class FilmRepository extends BaseRepository<Film> {
     }
 
     public List<Film> findAll() {
-        return findMany(FIND_ALL_FILMS);
+        List<Film> films = findMany(FIND_ALL_FILMS);
+        addAllGenres(films);
+        return films;
     }
 
     public Optional<Film> findById(int id) {
@@ -99,6 +101,12 @@ public class FilmRepository extends BaseRepository<Film> {
         film.setGenres(new HashSet<>(genres));
     }
 
+    private void addAllGenres(List<Film> films) {
+        if (films != null) {
+            films.forEach(this::addGenres);
+        }
+    }
+
     private void addGenresAndRatingToDB(Film film) {
         MpaFilm mpaFilm = film.getMpa();
         if (mpaFilm != null) {
@@ -116,6 +124,8 @@ public class FilmRepository extends BaseRepository<Film> {
     }
 
     public Collection<Film> findPopularFilms(int count) {
-        return findMany(FIND_POPULAR_FILMS, count);
+        List<Film> films = findMany(FIND_POPULAR_FILMS, count);
+        addAllGenres(films);
+        return films;
     }
 }

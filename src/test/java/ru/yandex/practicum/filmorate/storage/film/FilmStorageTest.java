@@ -177,12 +177,9 @@ class FilmStorageTest {
         filmStorage.addLike(film3.getId(), userAdd2.getId());
         filmStorage.addLike(film3.getId(), userAdd3.getId());
 
-
         Collection<Film> films = filmStorage.findPopularFilms(2);
 
-
         List<Film> popular = new ArrayList<>(films);
-
         // Проверяем порядок по убыванию лайков
         assertEquals(film2.getId(), popular.get(0).getId());
         assertEquals(film3.getId(), popular.get(1).getId());
