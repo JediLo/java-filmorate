@@ -26,6 +26,4 @@ public class MpaService {
     public List<MpaFilm> findAll() {
         return mpaStorage.findAll();
     }
-
-
 }

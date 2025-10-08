@@ -24,7 +24,6 @@ public class FilmRowMapper implements RowMapper<Film> {
         }
         film.setDuration(rs.getInt("duration"));
         int rating = rs.getInt("rating_id");
-
         if (rating > 0) {
             film.setMpa(new MpaFilm(rs.getString("rating"), rating));
         }

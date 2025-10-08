@@ -30,14 +30,11 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User addUser(User user) {
         return userRepository.addUser(user);
-
-
     }
 
     @Override
     public User updateUser(User user) {
         return userRepository.updateUser(user);
-
     }
 
     @Override
@@ -58,7 +55,6 @@ public class UserDbStorage implements UserStorage {
     @Override
     public List<User> findAllFriends(int id) {
         return userRepository.findAllFriendsById(id);
-
     }
 
     @Override

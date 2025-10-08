@@ -3,14 +3,13 @@ package ru.yandex.practicum.filmorate.service.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exceptions.DuplicatedDataException;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -85,6 +84,10 @@ public class UserService {
 
     public void addFriend(int id, int friendId) {
         log.info("Попытка добавить друга");
+        if (id == friendId) {
+            log.warn("Нельзя добавить самого себя в друзья");
+            throw new DuplicatedDataException("Добавление самого себя в друзья недоступно");
+        }
         Optional<User> user = userStorage.getUserById(id);
         Optional<User> userFriend = userStorage.getUserById(friendId);
         if (user.isEmpty() || userFriend.isEmpty()) {
@@ -103,7 +106,6 @@ public class UserService {
         } else {
             userStorage.removeFriend(id, friendId);
         }
-
     }
 
     public Collection<User> findAllFriends(int id) {
@@ -118,20 +120,8 @@ public class UserService {
 
     public Collection<User> findAllMutualFriends(int id, int otherId) {
         log.info("Попытка получения всех общих друзей пользователей с ID: {} и {}", id, otherId);
-        User user = getExistingUserById(id);
-        User other = getExistingUserById(otherId);
-        Set<Integer> friendUser = user.getFriendSet();
-        Set<Integer> friendOther = other.getFriendSet();
-
-        Set<Integer> mutual = new HashSet<>(friendUser);
-        mutual.retainAll(friendOther);
-
+        Collection<User> usersFriends = userStorage.findAllMutualFriends(id, otherId);
         log.info("Получаем список общих друзей");
-        return mutual.stream()
-                .map(userStorage::getUserById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-
+        return usersFriends;
     }
 }

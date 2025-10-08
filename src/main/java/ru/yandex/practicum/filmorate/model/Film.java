@@ -33,7 +33,4 @@ public class Film {
     private int duration;
     private MpaFilm mpa;
     private Set<Genre> genres;
-    private Set<Integer> likesUsers;
-
-
 }

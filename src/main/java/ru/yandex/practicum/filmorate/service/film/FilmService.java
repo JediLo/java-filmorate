@@ -6,12 +6,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.genre.GenreStorage;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Optional;
 
 
@@ -21,11 +22,13 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final GenreStorage genreStorage;
     private final MpaStorage mpaStorage;
+    private final UserStorage userStorage;
 
-    public FilmService(@Qualifier("bd") FilmStorage filmStorage, GenreStorage genreStorage, MpaStorage mpaStorage) {
+    public FilmService(@Qualifier("bd") FilmStorage filmStorage, GenreStorage genreStorage, MpaStorage mpaStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.genreStorage = genreStorage;
         this.mpaStorage = mpaStorage;
+        this.userStorage = userStorage;
     }
 
     public Collection<Film> findAllFilms() {
@@ -84,6 +87,19 @@ public class FilmService {
         }
     }
 
+    private void validateUserAndFilmExist(int filmId, int userId) {
+        Optional<User> user = userStorage.getUserById(userId);
+        Optional<Film> film = filmStorage.getFilmByID(filmId);
+        if (user.isEmpty()) {
+            log.warn("Пользователь с ID {} нет в базе данных", userId);
+            throw new NotFoundException("Несуществующий пользователь");
+        }
+        if (film.isEmpty()) {
+            log.warn("Фильма с ID {} нет в базе данных", filmId);
+            throw new NotFoundException("Несуществующий фильм");
+        }
+    }
+
     private Film updateFilmData(Film newFilm) {
         log.info("Попытка обновления данных фильма");
         Optional<Film> film = filmStorage.getFilmByID(newFilm.getId());
@@ -99,24 +115,16 @@ public class FilmService {
 
     public void addLike(int filmId, int userId) {
         log.info("Попытка поставить лайк фильму с ID: {}, пользователем с ID: {}", filmId, userId);
+        validateUserAndFilmExist(filmId, userId);
         filmStorage.addLike(filmId, userId);
-        //if (!film.addLike(userId)) {
-        //   throw new DuplicatedDataException("Лайк уже был поставлен ранее");
-        // }
         log.info("Лайк у фильма с ID: {}, был добавлен пользователем с ID:{}", filmId, userId);
-
-
     }
 
     public void removeLike(int filmId, int userId) {
         log.info("Попытка убрать лайк у фильма с ID: {}, пользователем с ID: {}", filmId, userId);
+        validateUserAndFilmExist(filmId, userId);
         filmStorage.removeLike(filmId, userId);
-        //if (!film.removeLike(userId)) {
-        //    throw new DuplicatedDataException("Нет лайка который вы хотели бы убрать");
-        //}
         log.info("Лайк у фильма с ID: {}, был убран пользователем с ID:{}", filmId, userId);
-
-
     }
 
     public Collection<Film> findPopularFilms(int count) {
@@ -124,11 +132,8 @@ public class FilmService {
         if (count < 1) {
             throw new ValidationException("Количество фильмов не может быть отрицательным");
         }
+        Collection<Film> popularFilms = filmStorage.findPopularFilms(count);
         log.info("Получен список лучших {} фильмов", count);
-        return filmStorage.findAllFilms().stream()
-                .sorted(Comparator.comparingInt((Film film) -> film.getLikesUsers().size()).reversed())
-                .limit(count)
-                .toList();
-
+        return popularFilms;
     }
 }

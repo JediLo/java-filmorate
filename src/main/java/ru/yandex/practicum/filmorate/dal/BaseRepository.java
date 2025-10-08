@@ -71,12 +71,4 @@ public class BaseRepository<T> {
         return jdbc.query(query, customMapper, params);
     }
 
-    protected <R> Optional<R> queryOne(String query, RowMapper<R> customMapper, Object... params) {
-        try {
-            R result = jdbc.queryForObject(query, customMapper, params);
-            return Optional.ofNullable(result);
-        } catch (EmptyResultDataAccessException ignored) {
-            return Optional.empty();
-        }
-    }
 }

@@ -13,5 +13,4 @@ public interface GenreStorage {
     Optional<Genre> getGenreById(int id);
 
     boolean genresExist(Collection<Genre> genres);
-
 }

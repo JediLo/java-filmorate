@@ -14,7 +14,6 @@ public class GenreService {
 
     private final GenreStorage genreStorage;
 
-
     public GenreService(GenreStorage genreStorage) {
         this.genreStorage = genreStorage;
     }

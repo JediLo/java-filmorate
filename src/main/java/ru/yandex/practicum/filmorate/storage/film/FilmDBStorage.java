@@ -50,5 +50,8 @@ public class FilmDBStorage implements FilmStorage {
         filmRepository.removeLike(filmId, userId);
     }
 
-
+    @Override
+    public Collection<Film> findPopularFilms(int count) {
+        return filmRepository.findPopularFilms(count);
+    }
 }
