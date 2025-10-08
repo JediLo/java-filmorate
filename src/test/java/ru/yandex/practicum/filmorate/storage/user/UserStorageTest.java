@@ -32,6 +32,7 @@ class UserStorageTest {
     public void testAddUser() {
         User userAdd = new User(0, "email@mail.ru", "login", "name",
                 LocalDate.of(2000, 2, 2));
+        userStorage.addUser(userAdd);
         Optional<User> userOptional = userStorage.getUserById(1);
         assertThat(userOptional).isPresent();
     }
