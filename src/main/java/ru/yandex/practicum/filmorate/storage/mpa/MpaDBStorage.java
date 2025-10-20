@@ -11,7 +11,7 @@ import java.util.Optional;
 @Component
 public class MpaDBStorage implements MpaStorage {
 
-    MpaRepository mpaRepository;
+    private final MpaRepository mpaRepository;
 
     public MpaDBStorage(MpaRepository mpaRepository) {
         this.mpaRepository = mpaRepository;

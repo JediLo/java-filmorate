@@ -12,7 +12,7 @@ import java.util.Optional;
 @Component
 public class GenreDBStorage implements GenreStorage {
 
-    GenreRepository genreRepository;
+    private final GenreRepository genreRepository;
 
     public GenreDBStorage(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;

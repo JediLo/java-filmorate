@@ -12,7 +12,7 @@ import java.util.Optional;
 
 
 @Slf4j
-@Qualifier("bd")
+@Qualifier("UserDB")
 @Component
 public class UserDbStorage implements UserStorage {
 
