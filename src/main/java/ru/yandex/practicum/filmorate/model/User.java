@@ -5,8 +5,6 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -26,15 +24,4 @@ public class User {
     @NotNull(message = "Дата рождения должна быть заполнена")
     @Past(message = "Дата рождения должна быть в прошлом")
     private LocalDate birthday;
-
-    private Set<Integer> friendSet = new HashSet<>();
-
-
-    public boolean addFriend(Integer id) {
-        return friendSet.add(id);
-    }
-
-    public void removeFriend(int id) {
-        friendSet.remove(id);
-    }
 }

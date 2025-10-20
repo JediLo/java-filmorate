@@ -38,7 +38,9 @@ public class FilmController {
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
+
         return filmService.addFilm(film);
+
 
     }
 
@@ -48,14 +50,14 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable int id,
+    public void addLike(@PathVariable int id,
                         @PathVariable int userId) {
-        return filmService.addLike(id, userId);
+        filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public Film removeLike(@PathVariable int id,
+    public void removeLike(@PathVariable int id,
                            @PathVariable int userId) {
-        return filmService.removeLike(id, userId);
+        filmService.removeLike(id, userId);
     }
 }
